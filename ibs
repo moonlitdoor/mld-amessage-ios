@@ -1,0 +1,155 @@
+#!/bin/bash
+
+# Parse the parameters passed in
+for (( i=1; i<=$#; i++ )); do
+  if [[ "${!i}" = "--help" ]]; then
+    DISPLAY_HELP=true
+  elif [[ "${!i}" = "--local" ]]; then
+    LOCAL=true
+  elif [[ "${!i}" = "--version" ]]; then
+    VERSION="$(($i+1))"
+    ibs_version="${!VERSION}"
+  elif [[ "${!i}" = "--init" ]]; then
+    INIT=true
+  elif [[ "${!i}" = "--update" ]]; then
+    UPDATE=true
+  elif [[ "${!i}" = "--log" ]]; then
+    LOG=true
+  fi
+done
+
+function log {
+  if [[ "${LOG}" ]]; then
+    echo "${@}"
+  fi
+}
+
+function error {
+  echo -e "\033[0;31m${@}\033[0m"
+  exit 1
+}
+
+function displayHelp {
+  echo "+----------------------------------------------------------------------------------------------------------------------------------------------------+"
+  echo "| ibs usage:                                                                                                                                         |"
+  echo "+-----------+-------------+------------------------------------------+-------------------------------------------------------------------------------+"
+  echo "| Flag      | Second Flag | Second Flag Parameter                    | Description                                                                   |"
+  echo "+-----------+-------------+------------------------------------------+-------------------------------------------------------------------------------+"
+  echo "| --help    |             |                                          | Displays this help message.                                                   |"
+  echo "| --log     |             |                                          | Enables debug logging for ibs.                                                |"
+  echo "| --version |             |                                          | Display the installed version and the latest version.                         |"
+  echo "| --init    |             |                                          | Downloads and installs the latest version or the version in 'ibs.properties'. |"
+  echo "| --init    | --version   | git tag || git commit hash || git branch | Downloads and installs the given version.                                     |"
+  echo "| --update  |             |                                          | Downloads and installs the latest version.                                    |"
+  echo "| --update  | --version   | git tag || git commit hash || git branch | Downloads and installs the given version.                                     |"
+  echo "+-----------+-------------+------------------------------------------+-------------------------------------------------------------------------------+"
+  exit
+}
+
+function getLatestVersion {
+  LATEST_RELEASE_URL="$(curl -fsSLI -o /dev/null -w %{url_effective} https://github.com/moonlitdoor/ibs/releases/latest && echo)"
+  LATEST_VERSION="${LATEST_RELEASE_URL##*/}"
+}
+
+function displayVersions {
+  echo "Latest version: ${LATEST_VERSION}"
+  if [[ -f "./.ibs/version.ibs" ]]; then
+    source "./.ibs/version.ibs"
+    echo "Current version: ${IBS_VERSION}"
+  else
+    echo "ibs has not yet been installed."
+  fi
+  if [[ -f "./ibs.properties" ]]; then
+    sourceProperties "./ibs.properties"
+    echo "Expected version: ${ibs_version}"
+  else
+    echo "No expected version found."
+  fi
+  exit
+}
+
+function init {
+  log "Setting up ibs on version ${1}."
+  getIbs ${1}
+}
+
+function getIbs {
+  curl -Lso ibs.tar.gz "https://api.github.com/repos/moonlitdoor/ibs/tarball/$1"
+  if [[  -d "./.ibs" ]]; then
+    rm -r "./.ibs"
+  fi
+  mkdir ./.ibs
+  tar xzf ibs.tar.gz
+  rm ibs.tar.gz
+  mv moonlitdoor-ibs*/* .ibs
+  rm -r moonlitdoor-ibs*
+  unpack ${1}
+}
+
+function unpack {
+  if [[ -f "./ibs.properties" ]]; then
+    sed -i '' "s/\(ibs\.version=\).*\$/\1${1}/" ibs.properties
+  else
+    echo "ibs.version=$1" >> ibs.properties
+  fi
+  if [[ ! -f "./build.ibs" ]]; then
+    cp ./.ibs/build.ibs .
+  fi
+  exit
+}
+
+function initLocally {
+  if [[ -d "./.ibs" ]];  then
+    rm -r ./.ibs
+  fi
+  mkdir ./.ibs
+  cp ../ibs/* ./.ibs
+  unpack "local"
+}
+
+function sourceProperties {
+  if [[ -f "$1" ]]; then
+    while IFS== read -r KEY VALUE
+    do
+      KEY=$(echo ${KEY} | tr '.' '_')
+      eval ${KEY}=\$VALUE
+    done < "$1"
+  fi
+}
+
+if [[ "$DISPLAY_HELP" ]]; then
+  log "Displaying the Help Dialog"
+  displayHelp
+else
+  log
+  getLatestVersion
+  if [[ "$LOCAL" ]]; then
+    log 2
+    initLocally
+  elif [[ "$VERSION" ]] && [[ ! "$ibs_version" ]]  && [[ ! "$INIT" ]]  && [[ ! "$UPDATE" ]]; then
+    log 3
+    displayVersions
+  elif [[ ! -d "./.ibs" ]];  then
+    log 4
+    init "${LATEST_VERSION}"
+  elif [[ "$INIT" ]] && [[ ! "$VERSION" ]] && [[ ! -f "./ibs.properties" ]]; then
+    log 6
+    init "${LATEST_VERSION}"
+  elif [[ "$INIT" ]] && [[ ! "$VERSION" ]] && [[ -f "./ibs.properties" ]]; then
+    log 7
+    sourceProperties "./ibs.properties"
+    init "$ibs_version"
+  elif [[ "$INIT" ]] && [[ "$VERSION" ]] && [[ "$ibs_version" ]]; then
+    log 8
+    init "$ibs_version"
+  elif [[ "$UPDATE" ]] && [[ ! "$VERSION" ]]; then
+    log 9
+    init "${LATEST_VERSION}"
+  elif [[ "$UPDATE" ]] && [[ "$VERSION" ]] && [[ "$ibs_version" ]]; then
+    log 10
+    init "$ibs_version"
+  else
+    log 11
+    ./.ibs/ibs.sh "${@}"
+  fi
+fi

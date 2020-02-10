@@ -10,11 +10,18 @@ import UIKit
 
 class ViewController: UIViewController {
 
+    @IBOutlet weak var version: UILabel!
+    @IBOutlet weak var build: UILabel!
+    @IBOutlet weak var button: UIButton!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view.
     }
 
-
+    @IBAction func showBuildInfo(_ sender: Any) {
+        button.isEnabled = false
+        version.text = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String
+        build.text = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String
+    }
 }
 

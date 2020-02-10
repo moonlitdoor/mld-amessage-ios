@@ -15,6 +15,10 @@
 		85D27FD722DFB1EC00166936 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 85D27FD522DFB1EC00166936 /* LaunchScreen.storyboard */; };
 		85D27FE222DFB1EC00166936 /* amessageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85D27FE122DFB1EC00166936 /* amessageTests.swift */; };
 		85D27FED22DFB1EC00166936 /* amessageUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85D27FEC22DFB1EC00166936 /* amessageUITests.swift */; };
+		85D27FFB22DFCE8600166936 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 85D27FFA22DFCE8600166936 /* README.md */; };
+		85D2800522E00EF400166936 /* ibs.properties in Resources */ = {isa = PBXBuildFile; fileRef = 85D2800222E00EF400166936 /* ibs.properties */; };
+		85D2800622E00EF400166936 /* ibs in Resources */ = {isa = PBXBuildFile; fileRef = 85D2800322E00EF400166936 /* ibs */; };
+		85D2800722E00EF400166936 /* build.ibs in Resources */ = {isa = PBXBuildFile; fileRef = 85D2800422E00EF400166936 /* build.ibs */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -49,6 +53,10 @@
 		85D27FE822DFB1EC00166936 /* amessageUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = amessageUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		85D27FEC22DFB1EC00166936 /* amessageUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = amessageUITests.swift; sourceTree = "<group>"; };
 		85D27FEE22DFB1EC00166936 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		85D27FFA22DFCE8600166936 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		85D2800222E00EF400166936 /* ibs.properties */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ibs.properties; sourceTree = "<group>"; };
+		85D2800322E00EF400166936 /* ibs */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = ibs; sourceTree = "<group>"; };
+		85D2800422E00EF400166936 /* build.ibs */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = build.ibs; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -79,6 +87,10 @@
 		85D27FBD22DFB1EB00166936 = {
 			isa = PBXGroup;
 			children = (
+				85D2800422E00EF400166936 /* build.ibs */,
+				85D2800322E00EF400166936 /* ibs */,
+				85D2800222E00EF400166936 /* ibs.properties */,
+				85D27FFA22DFCE8600166936 /* README.md */,
 				85D27FC822DFB1EB00166936 /* amessage */,
 				85D27FE022DFB1EC00166936 /* amessageTests */,
 				85D27FEB22DFB1EC00166936 /* amessageUITests */,
@@ -138,6 +150,7 @@
 				85D27FC222DFB1EB00166936 /* Sources */,
 				85D27FC322DFB1EB00166936 /* Frameworks */,
 				85D27FC422DFB1EB00166936 /* Resources */,
+				85D2800E22E0104A00166936 /* Set Build and Version Numbers */,
 			);
 			buildRules = (
 			);
@@ -232,8 +245,12 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				85D2800522E00EF400166936 /* ibs.properties in Resources */,
 				85D27FD722DFB1EC00166936 /* LaunchScreen.storyboard in Resources */,
 				85D27FD422DFB1EC00166936 /* Assets.xcassets in Resources */,
+				85D2800622E00EF400166936 /* ibs in Resources */,
+				85D2800722E00EF400166936 /* build.ibs in Resources */,
+				85D27FFB22DFCE8600166936 /* README.md in Resources */,
 				85D27FCF22DFB1EB00166936 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -253,6 +270,28 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		85D2800E22E0104A00166936 /* Set Build and Version Numbers */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(TARGET_BUILD_DIR)/$(INFOPLIST_PATH)",
+			);
+			name = "Set Build and Version Numbers";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Type a script or drag a script file from your workspace toinsert its path.\n$SRCROOT/.ibs/set_build_and_version_numbers.sh\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		85D27FC222DFB1EB00166936 /* Sources */ = {
